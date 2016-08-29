@@ -7,13 +7,13 @@
 
 # Site Settings
 locale                   : "en"
-title                    : "Site Title"
+title                    : "VSadov's Blog"
 title_separator          : "-"
-name                     : "Your Name"
-description              : "An amazing website."
-url                      : # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
-baseurl                  : # the subpath of your site, e.g. "/blog"
-repository               : # GitHub username/repo-name e.g. "mmistakes/minimal-mistakes"
+name                     : "Vladimir Sadov"
+description              : "Random pile of my own opinions."
+url                      : "http://localhost:4000" #"https://VSadov.github.io"
+baseurl                  : "" # the subpath of your site, e.g. "/blog"
+repository               : "VSadov/VSadov.github.io" # GitHub username/repo-name e.g. "mmistakes/minimal-mistakes"
 teaser                   : # filename of teaser fallback teaser image placed in /images/, .e.g. "500x300.png"
 # breadcrumbs            : false # true, false (default)
 words_per_minute         : 200
@@ -55,7 +55,7 @@ yandex_site_verification :
 
 # Social Sharing
 twitter:
-  username               :
+  username               : "v_sadov"
 facebook:
   username               :
   app_id                 :
@@ -67,6 +67,7 @@ social:
   type                   : # Person or Organization (defaults to Person)
   name                   : # If the user or organization name differs from the site's name
   links: # An array of links to social media profiles
+    - "https://twitter.com/v_sadov"
 
 # Analytics
 analytics:
@@ -77,19 +78,19 @@ analytics:
 
 # Site Author
 author:
-  name             : "Your Name"
+  name             : "Vladimir Sadov"
   avatar           : "bio-photo.jpg"
-  bio              : "I am an amazing person."
-  location         : "Somewhere"
+  bio              : "Engineer"
+  location         :
   email            :
-  uri              :
+  uri              : "https://github.com/VSadov"
   bitbucket        :
   codepen          :
   dribbble         :
   flickr           :
   facebook         :
   foursquare       :
-  github           :
+  github           : "VSadov"
   google_plus      :
   keybase          :
   instagram        :
@@ -100,7 +101,7 @@ author:
   stackoverflow    : # http://stackoverflow.com/users/123456/username
   steam            :
   tumblr           :
-  twitter          :
+  twitter          : "v_sadov"
   vine             :
   weibo            :
   xing             :
@@ -191,6 +192,19 @@ whitelist:
   - jekyll-feed
   - jemoji
 
+# defaults
+defaults:
+  # _posts
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: single
+      author_profile: true
+      read_time: true
+      comments: true
+      share: true
+      related: true
 
 # Archives
 #  Type
