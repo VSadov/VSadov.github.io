@@ -6,7 +6,7 @@ This is the second post.
 
 Now that we have two posts it is clearly working.
 
-```C#
+``` csharp
 class C1
 {
   public static void Main()
