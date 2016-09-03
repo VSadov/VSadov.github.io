@@ -47,7 +47,7 @@ Well, that is just because we are lucky and ```x``` is always stored in the same
 
 Lets try something more complex.
 
-```CS
+```cs
 static async Task M()
 {
     while (true)
