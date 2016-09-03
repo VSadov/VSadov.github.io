@@ -40,7 +40,7 @@ The output is
 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 . . .
 ```
 
-In C# local variables are modeled as created anew whenever the the containing lexical scope is entered. We are supposed to get a new ```x``` every time we enter the containing block. In reality compiler reuses the same slot for ```x``` and relies on definite analysis to ensure that you will never observe the value left by the previous iteration. The analysis expects that the variable is overwritten by ```Foo```before we read it, but ```Foo``` does not actually do that so the program compiles with undefined behavior.
+In C# local variables are modeled as created anew whenever the containing lexical scope is entered. We are supposed to get a new ```x``` every time we enter the block. In reality compiler reuses the same slot for ```x``` and relies on definite analysis to ensure that you will never observe the value left by the previous iteration. The analysis expects that the variable is overwritten by ```Foo```before we read it, but ```Foo``` does not actually do that so the program compiles with undefined behavior.
 
 So far it does not look too bad. Yes, we see the values from the previous iteration, but the behavior seems deterministic.
 Well, that is just because we are lucky and ```x``` is always stored in the same location. 
