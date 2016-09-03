@@ -9,7 +9,7 @@ C# ```out``` calling convention is built on mutual _trust_. ```out``` parameter 
 Since C# cannot break the protocol, lets use another language that can. 
 VB to the "rescue".
 
-```VB
+```vb
 Imports System.Runtime.InteropServices
 
 Public Class Class1
