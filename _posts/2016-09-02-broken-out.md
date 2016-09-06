@@ -1,12 +1,12 @@
 ---
 title: What happens if 'out' parameter is not assigned by the calee?
-tags: [C#]
+tags: [CSharp]
 ---
-C# specification is fairly vague about scenarios that can only possibly happen outside of a closed C#-only system. The situations where some parts do not follow the rules lead to "unspecified" behavior. How bad can it get though? 
+C# specification is fairly vague about scenarios that can only possibly happen outside of a closed C#-only system. The situations where some parts do not follow the rules lead to "unspecified" behavior. How bad can it get though?
 
-In C# ```out``` calling convention is built on mutual _trust_. ```out``` parameter is essentially a ```ref``` parameter that callee promises to assign before returning. It does that by marking the parameter with ```out``` attribute. Broken promise here primarily affects definite analysis and features based on that analysis.
+In C# ```out``` calling convention is built on mutual _trust_ between caller and callee. ```out``` parameter is essentially a ```ref``` parameter that callee promises to assign before returning. It makes that promise by marking the parameter with ```out``` attribute. Broken promise here primarily affects definite analysis and features based on that analysis.
 
-Since C# cannot break the protocol, lets use another language that can. 
+Since C# cannot break the protocol, lets use another language that can.
 VB to the "rescue".
 
 ```vb
@@ -18,9 +18,9 @@ Public Class Class1
     End Sub
 End Class
 
-``` 
+```
 
-And the client will be like:
+And we will call that code from:
 
 ```cs
 static void M()
@@ -40,10 +40,10 @@ The output is
 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 . . .
 ```
 
-In C# local variables are modeled as created anew whenever the containing lexical scope is entered. We are supposed to get a new ```x``` every time we enter the block. In reality compiler reuses the same slot for ```x``` and relies on definite analysis to ensure that you will never observe the value left by the previous iteration. The analysis expects that the variable is overwritten by ```Foo```before we read it, but ```Foo``` does not actually do that so the program compiles with undefined behavior.
+Per C# spec a new set of local variables is created when execution enters their containing lexical scope. We are supposed to get a new ```x``` every time we enter the ```{ }``` block. In reality compiler reuses the same slot for ```x``` and relies on definite analysis to ensure that you will never know the difference by observing a value left by a previous iteration. The analysis assumes that the value is overwritten by ```Foo``` before we read from ```x```, but ```Foo``` does not actually do that so the program compiles with undefined behavior.
 
 So far it does not look too bad. Yes, we see the values from the previous iteration, but the behavior seems deterministic.
-Well, that is just because we are lucky and ```x``` is always stored in the same location. 
+Well, that is just because we are lucky and ```x``` is always stored in the same location.
 
 Lets try something more complex.
 
@@ -73,21 +73,21 @@ static async Task AwaitsSometimes()
 
 Now behavior is:
 
-Release build: 
+Release build:
 
 ```
 0 0 1 2 3 4 0 0 0 1 2 3 4 0 0 1 0 0 0 0 0 0 0 1 2 0 0 1 0 1 2 3 0 1 2 0 . . .
 ```
 
-Debug build: 
+Debug build:
 
 ```
-0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 . . . 
+0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 . . .
 ```
 
 What is going on?
 
-When ```AwaitsSometimes``` randomly awaits, it forces the caller to suspend and schedule the rest of itself as an asyncronous continuation of ```Task.Yield```. While doing that, caller saves the values of the local variables in a display storage, so that when resumed, it could continue with the same state. It does not, however, save the value of ```x``` considering that as pointless. For all it knows from the definite assignment analysis, at the point of ```await AwaitsSometimes()```, ```x``` contains undefined junk that will be overwritten before the variable is used anyways.
+When ```AwaitsSometimes``` randomly awaits, it forces the caller to suspend and schedule the rest of itself as an asyncronous continuation of ```Task.Yield```. While doing that, caller saves the values of the local variables in a display storage, so that when resumed, it could continue with the same state. It does not, however, save the value of ```x``` considering that as pointless. For all it knows from the definite assignment analysis, at the point of ```await AwaitsSometimes()```, ```x``` contains undefined junk which will be overwritten before the variable is used anyways.
 Since we go into suspension _sometimes_, we observe the loss of the value _sometimes_. Not the behavior you want from an otherwise straightforward program...
 
 Why then Debug behavior is different?

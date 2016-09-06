@@ -1,6 +1,6 @@
 ---
 title: ref returns are not pointers.
-tags: [C#, refs]
+tags: [CSharp, refs]
 ---
 With the introduction of ref returns and ref locals in C#7, I often hear questions that indicate confusion between byref returns and pointers.
 
