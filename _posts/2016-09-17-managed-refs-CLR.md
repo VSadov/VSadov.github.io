@@ -18,9 +18,9 @@ The GC "magic" results in certain limitations:
 In fact the aliasing "true pointer" implementation is not even strictly guaranteed. For example in calls done via remoting it is permitted for a conforming CLI implementation to implement ```&``` parameters as copy-in/copy-out.
 
 * Fields and array elements are not permitted to have ```&``` types. ```&``` cannot be boxed either.
-These restrictions are a bit artificial. It just makes the job of GC easier if ```&``` themselves are never on the heap. In theory ```&``` fields and the like could be permitted and would allow for strange object topologies that are entirely alive via referring to each other via internal ```&``` pointers. There is, however, not a lot of value in that.
+These restrictions are a bit artificial. It just makes the job of GC easier if ```&``` themselves are never on the heap. In theory ```&``` fields and the like could be permitted and would allow for strange object topologies that are entirely alive by referring to each other via internal ```&``` pointers. There is, however, not a lot of value in that.
 
-* Managed pointer cannot point to another managed pointer. Since managed pointers cannot be on the heap, there is a little reason to allow this and disallowing makes the type system simpler. Note that it is permitted for a ```&``` to point to a regular reference type variable ```O```.
+* Managed pointer cannot point to another managed pointer. Since managed pointers cannot be on the heap, there is a little reason to allow this and disallowing makes the type system simpler. Note that it is permitted for a managed pointer ```&``` to point to unmanaged pointers ```*``` or regular reference type variables ```O```.
 
 * Managed pointers ```&``` are not interchangeable with object references ```O``` - they never point to same locations. While it is possible to cast ```&``` to an unmanaged pointer ```*```, it is extremely unsafe. If the referent was an unpinned heap object, the numeric value of the pointer is meaningless and using such pointer can cause AVs or heap corruptions.
 
