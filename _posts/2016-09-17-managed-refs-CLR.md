@@ -3,10 +3,10 @@ title: Managed pointers.
 tags: [CLR, refs]
 ---
 After untangling some confusion about [ref variables in C#]({% post_url 2016-09-05-refs-not-ptrs %}), lets bring some confusion back.  
-Many questions in [that post]({% post_url 2016-09-05-refs-not-ptrs %}), while not applicable to C#, are meaningful when asked about CLR managed pointers.
+Many questions in [that post]({% post_url 2016-09-05-refs-not-ptrs %}), while not applicable to C#, are meaningful when asked about CLR managed pointers. So, why do we not have managed pointers in C#?
 
 Firstly, C# has a concept of unmanaged pointers. Unmanaged pointers are just types with certain operations like indirection (*), member access (->), indexing ([]), etc...
-Compared to managed pointers, unmanaged pointers are rather boring. They are basically just strongly typed pointer-sized integers. Both ```int*``` and ```long*``` are simply two numbers and in fact could have same numerical value. The only difference is the granularity of indexing and interpretation of dereferencing operations.
+Compared to managed pointers, unmanaged pointers are rather boring. They are basically just strongly typed pointer-sized integers. Both ```int*``` and ```long*``` are simply two numbers and in fact could have the same numerical value. The only difference is the granularity of indexing and interpretation of dereferencing operations.
 
 Managed pointers are much more "magical". Similarly to object references ```O```, managed pointers ```&``` can point to managed heap objects. The main difference is that ```O``` always points to a whole object, while ```&``` points to variables that are parts of something else local slots or method parameters, array elements, fields, including fields of objects on the managed heap.
 Since ```&``` can point to managed memory, they are reported to GC. They are counted as roots for reachability purposes and will be adjusted by GC during compaction. I.E. a live managed pointer to a field will keep the whole object alive and when GC needs to move the object in memory, the pointer will be adjusted.  
