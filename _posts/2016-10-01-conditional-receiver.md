@@ -28,7 +28,7 @@ static string Name()
 }
 ```
 
-The interesting point here is that the variant with conditional operator is not just shorter and more readable. It is also avoiding subtle double-evaluation flaws.
+The interesting point here is that the variant with conditional operator is not just shorter and more readable. It is also avoiding subtle double-evaluation flaw.
 If you look carefully at the first example, there are two reads of ```customer``` field. The first read is to check for null and the second is to invoke the ```Name```. If there is a possibility that ```customer``` can be assigned ```null``` between the null check and the invocation, it would result in occasional NullReferenceException, - negating the whole point of the null check.
 
 The actual code emitted for the conditional operator is more similar to:
@@ -45,7 +45,7 @@ void string Name()
 }
 ```
 
-It may seem like the usage of conditional operators could result in a lot of extra locals. However that is generally not a problem. The temporary only needs to exist "logically". In many cases compiler can achieve the same results by simply duplicating the value on the VOS execution stack.
+It may seem like the usage of conditional operators could result in a lot of extra locals. However that is generally not a problem. The temporary only needs to exist "logically". In many cases compiler can achieve the same results by simply duplicating the value on the VES execution stack.
 
 The actual IL for the code above looks like:
 
@@ -79,7 +79,7 @@ static string Name(Customer customer)
 }
 ```
 
-The corresponding IL will not make a copy. Compiler knows that byval argument cannot change between the null check and the invocation. There are no observable sideeffects from re-reading the argument and thus there is no point to make a private copy.
+The corresponding IL will not make a copy. Compiler knows that byval argument cannot change between the null check and the invocation. There are no observable sideeffects from re-reading the argument and thus there is no point in making a private copy.
 
 ```cs
 .method private hidebysig static
