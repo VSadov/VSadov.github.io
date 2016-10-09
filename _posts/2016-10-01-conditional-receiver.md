@@ -2,7 +2,7 @@
 title: Conditional operator (capturing the receiver).
 tags: [CSharp, Conditional Operator]
 ---
-Conditional operator is a popular new language features that was added in C#6. At the high level it is an operator that replaces the boiler plate code of conditionally invoking a member off a variable that can be null. But there is more.
+Conditional access operator is a popular new language features that was added in C#6. At the high level it is an operator that replaces the boiler plate code of conditionally invoking a member off a variable that can be null. But there is more.
 
 The typical code that conditional operator replaces looks like:
 
@@ -28,10 +28,10 @@ static string Name()
 }
 ```
 
-The interesting point here is that the variant with conditional operator is not just shorter and more readable. It is also avoiding subtle double-evaluation flaw.
+The interesting point here is that the variant with conditional access is not just shorter and more readable. It is also avoiding subtle double-evaluation flaw.
 If you look carefully at the first example, there are two reads of ```customer``` field. The first read is to check for null and the second is to invoke the ```Name```. If there is a possibility that ```customer``` can be assigned ```null``` between the null check and the invocation, it would result in occasional NullReferenceException, - negating the whole point of the null check.
 
-The actual code emitted for the conditional operator is more similar to:
+The actual code emitted for the conditional access is more similar to:
 
 ```cs
 static Customer customer;
@@ -45,7 +45,7 @@ void string Name()
 }
 ```
 
-It may seem like the usage of conditional operators could result in a lot of extra locals. However that is generally not a problem. The temporary only needs to exist "logically". In many cases compiler can achieve the same results by simply duplicating the value on the VES execution stack.
+It may seem like the usage of conditional access could result in a lot of extra locals. However that is generally not a problem. The temporary only needs to exist "logically". In many cases compiler can achieve the same results by simply duplicating the value on the VES execution stack.
 
 The actual IL for the code above looks like:
 

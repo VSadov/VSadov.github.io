@@ -1,10 +1,10 @@
 ---
-title: Conditional operator (generic receivers).
+title: Conditional access operator (generic receivers).
 tags: [CSharp, Conditional Operator]
 ---
-Generally conditional operator is applicable only to variables of reference or nullable types. Essentially the receiver must be able to have a null value. An interesting case arises when the type of the receiver is a generic type parameter.
+Generally conditional access operator is applicable only to variables of reference or nullable types. Essentially the receiver must be able to have a null value. An interesting case arises when the type of the receiver is a generic type parameter.
 
-The restriction for generics is basically "some substitutions of T can be types that can have null value". Note that it is not required for _all_ substitutions to allow nulls. Such restriction was considered and rejected for being too constraining. As a result, with generics, you may have a situation where receiver can be either a struct or a class and conditional operator is still permitted.
+The restriction for generics is basically "some substitutions of T can be types that can have null value". Note that it is not required for _all_ substitutions to allow nulls. Such restriction was considered and rejected for being too constraining. As a result, with generics, you may have a situation where receiver can be either a struct or a class and conditional access is still permitted.
 
 Consider the following example:
 
@@ -157,5 +157,5 @@ static void SafeDispose<T>(ref T d) where T: IDisposable
 }
 ```
 
-The check ```(object)default(T) == null``` is indeed a dynamic check and may look expensive. Fortunately most JIT compilers emit separate native method bodies for cases where T is a reference or value types. As a result of such separation the condition becomes a JIT-time constant and the actual native code can omit the check and simply drop the code path that is not applicable as unreachable.  
+The check ```(object)default(T) == null``` is indeed a dynamic check and may look expensive and potentially boxing. Fortunately most JIT compilers emit separate native method bodies for cases where T is a reference or value types. As a result of such separation the condition becomes a JIT-time constant and the actual native code can omit the check and simply drop the code path that is not applicable as unreachable.  
 So, at the end we have correct behavior regardless if T happens to be a class or a struct and performance is good as well.
