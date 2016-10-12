@@ -13,12 +13,12 @@ Examples of various guarantees:
 
 - Trivial read of a static variable.  
  Accessing a static variable is mapped to a single read of a static variable as implemented by the underlying platform. CLI standards specify that reads of memory-aligned references and primitives no larger than the native word size is atomic, so reading those is completely thread-safe. That is - the timing of the read would depend on various factors such as weakness of the memory model, but you will never read a torn ```int``` with a value that never existed. (assuming that JIT aligns static fields, which it does).
-- Trivial read of a local variable
+- Trivial read of a local variable.  
  Regular locals are not shared between threads, so it is inherently thread-safe. Local captured into closures is a different matter. If closures are shared between threads then locals can be shared and thus access can have races. If a captured local is larger than the native word, the value may even be subject to tearing.
-- Compound operator like ```++``` or ```+=```
+- Compound operator like ```++``` or ```+=```  
  In ```variable++```, the spec implies a single evaluation of the _variable_, followed by a single read and a single write. So one ```++``` with respect to another concurrent ```++``` is, obviously, not thread safe since two independent reads and two independent writes can interleave and result in lost increments. Interestingly the _variable_ itself is evaluated only once resulting in additional guarantees. For example ```sharedArray[5]+=Val()``` can throw IndexOutOfRange only before evaluating ```Val()```, but not after.  
  Even if ```sharedArray``` is changed by ```Val()``` or changed concurrently while ```Val()``` is running, the write is not supposed to reevaluate ```sharedArray[5]``` and see the change.
- - Iterator methods
+ - Iterator methods  
  The only thing that an iterator method does is creating an iterator object in its initial state and there is no sharing implied during that. So as long as all the data involved is not shared or thread-safe for other reasons, it is completely ok to call iterator methods concurrently.
  The iterator object itself, however, is a completely different story. There is clearly a shared state that is mutated on every successful MoveNext. Iterating the same iterator concurrently is a very bad idea.
 
