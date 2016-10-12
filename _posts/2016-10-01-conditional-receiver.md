@@ -1,6 +1,6 @@
 ---
-title: Conditional operator (capturing the receiver).
-tags: [CSharp, Conditional Operator]
+title: Conditional member access operator (capturing the receiver).
+tags: [CSharp, Conditional Access]
 ---
 Conditional access operator is a popular new language features that was added in C#6. At the high level it is an operator that replaces the boiler plate code of conditionally invoking a member off a variable that can be null. But there is more.
 

@@ -1,6 +1,6 @@
 ---
-title: Conditional access operator (generic receivers).
-tags: [CSharp, Conditional Operator]
+title: Conditional member access operator (generic receivers).
+tags: [CSharp, Conditional Access]
 ---
 Generally conditional access operator is applicable only to variables of reference or nullable types. Essentially the receiver must be able to have a null value. An interesting case arises when the type of the receiver is a generic type parameter.
 
