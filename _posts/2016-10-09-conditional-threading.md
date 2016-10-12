@@ -50,7 +50,7 @@ Note that the race here is not introduced by the conditional member access. Simp
 ---
 
 -- Pedantic note:  
-In the most general sense, according to [ECMA-335](http://www.ecma-international.org/publications/standards/Ecma-335.htm) standard, only volatile memory access are considered sideeffecting. In such model it would be legal to transform
+In the most general sense, according to [ECMA-335](http://www.ecma-international.org/publications/standards/Ecma-335.htm) standard, only volatile memory accesses are considered sideeffecting. In such model it would be legal to transform
 
 ```cs
 static Customer customer;
