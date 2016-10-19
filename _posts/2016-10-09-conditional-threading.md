@@ -9,10 +9,10 @@ tags: [CSharp, Conditional Access, Concurrency]
 
 One may notice that the C# language spec is for the most part unconcerned about threading. With exception of features specifically dealing with concurrency like ```lock``` or ```volatile```, the semantics of the language is defined in terms of execution of statements and evaluation  of expressions. The thread safety of language features is mostly an emergent property of evaluation strategy and various implementation details.
 
-Examples of various guarantees:
+Examples of guarantees:
 
 - Trivial read of a static variable.  
- Accessing a static variable is mapped to a single read of a static variable as implemented by the underlying platform. CLI standards specify that reads of memory-aligned references and primitives no larger than the native word size is atomic, so reading those is completely thread-safe. That is - the timing of the read would depend on various factors such as weakness of the memory model, but you will never read a torn ```int``` with a value that never existed. (assuming that JIT aligns static fields, which it does).
+ Accessing a static variable is mapped to a single read of a static variable as implemented by the underlying platform. CLI standards specify that reads of memory-aligned references and primitives no larger than the native word size is atomic, so reading those is completely thread-safe. That is - the timing of the read would depend on factors such as weakness of the memory model, but you will never read a torn ```int``` with a value that never existed. (assuming that JIT aligns static fields, which it does).
 - Trivial read of a local variable.  
  Regular locals are not shared between threads, so it is inherently thread-safe. Local captured into closures is a different matter. If closures are shared between threads then locals can be shared and thus access can have races. If a captured local is larger than the native word, the value may even be subject to tearing.
 - Compound operator like ```++``` or ```+=```  
@@ -41,7 +41,7 @@ static Guid? sharedGuid;
 
 static string GetString() => sharedGuid?.ToString();
 ```
-GetString will never throw NullReferenceException, even if sharedGuid is concurrently assigned ```null```.
+GetString will never throw InvalidOperationException, even if sharedGuid is concurrently assigned ```null```.
 That is mostly for the same reasons as above. HasValue property of ```Guid?``` type is governed by a single ```bool``` field and reads and writes of that are atomic.
 
 The whole expression is not thread-safe, however. When you do get non-null results, they could be wildly inconsistent or even represent values of ```sharedGuid``` that never existed. Since ```Guid``` itself is a big and complex structure, its reads and writes are not atomic and subject to tearing. The result could be one half from a value that existed at some point stitched with a half from a different value.
