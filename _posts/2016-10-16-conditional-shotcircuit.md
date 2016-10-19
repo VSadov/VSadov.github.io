@@ -36,10 +36,10 @@ Indeed, the second variant is not very useful. There is no point watsoever to nu
 The first variant is how the cascading member accesses would be applied to a potentially null variable if written by hand.
 So, if the overall semantic is intuitive, what was the reason for the contention?
 
-In addition to the whole construct making sense, language designers also strive for  intuitive composition of feature with other features and for a user accustomed to regular member accesses, conditional operator has a major quirk here.  
+In addition to the whole construct making sense, language designers also strive for  intuitive composition of the feature with other features and for a user accustomed to regular member accesses, conditional operator has a major quirk here.  
 
-In a very loose sense the conditional member access can be seen as anshort-circuiting operator and having lower precedence than regular accesses while being _right-associative_ with respect to other trailing conditional accesses.  
-(associativity is not exactly the right term here, but I do not know what would fit better)
+In a very loose sense the conditional member access can be seen as a short-circuiting operator with lower precedence than regular accesses while being _right-associative_ with respect to other trailing conditional accesses.  
+(associativity and precedence are not exactly the right terms here, but I do not know what would fit better)
 
 If we could use parenthesis to illustrate parts of chained member accesses applied conditionally, the example above would look like
 
