@@ -55,7 +55,7 @@ Theoretically, an alternative grouping could be:
 var lastName = (customer?.Name).LastName;
 ```
 
-The problem is that only the second variant is a valid syntax, but unlike if used with a chain of all-regular accesses, it changes the meaning of the expression in a way that negates the point of the conditional access. Similar problem would arise if ```customer?.Name``` was refactored into a temporary. -  
+The problem is that only the second variant is a valid syntax, but unlike if used with a chain of all-regular accesses, it changes the meaning of the expression in a way that negates the point of the conditional access. Similar problem would arise if ```customer?.Name``` was refactored into a temporary local. -  
 
 The following refactoring of ```var lastName = customer?.Name.LastName;``` is not correct
 
