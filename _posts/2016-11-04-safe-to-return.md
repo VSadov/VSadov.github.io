@@ -54,7 +54,7 @@ The special treatment for "this" was added to handle the following scenario:
 
 ```cs
 
-interface IIndexable
+interface IIndexable<T>
 {
   public ref T this[int i]
 }
