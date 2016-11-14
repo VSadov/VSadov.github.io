@@ -45,7 +45,7 @@ void WritesIntIntoEx()
   // That is already bad by itself.
   // What is worse is that RefInt writes "42" into that location
   // If GC happens during the call, it may see something typed
-  // as "string" at completely bogus location.
+  // as "Exception" at completely bogus location.
   TakesTwoRefs(ref RefInt(), ref RefEx());
 }
 ```
