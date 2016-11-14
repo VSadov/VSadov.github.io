@@ -62,12 +62,12 @@ interface IIndexable
 ref int First<T>(T arg) where T: IIndexable<int>
 {
   // is this safe to return by reference?
-  return ref arg[1];
+  return ref arg[0];
 }
 
 ```
 
-The problem is that "this" is passed by reference to struct members and by value to class members. If we consider "this" in struct members the same as other parameters for the purpose of rile #6, we would have a problem here since we do not know whether T is a struct or a class. Treating type T conservatively as "can be a struct" would diminish the usefulness of ref returns when used with generics, so another approach was chosen. - "this" is completely ignored at the call site for the purpose of "safe to return" rule as we may not even know whether we are dealing with a struct or a class. To make that safe in cases when we do get a struct, the rule #5 was added. Surely, it is known inside a member whether the container is a struct or a class and the safety can be enforced there.
+The problem is that "this" is passed by reference to struct members and by value to class members. If we consider "this" in struct members the same as other parameters for the purpose of rule #6, we would have a problem here since we do not know whether T is a struct or a class. Treating type T conservatively as "can be a struct" would diminish the usefulness of ref returns when used with generics, so another approach was chosen. - "this" is completely ignored at the call site for the purpose of "safe to return" rule as we may not even know whether we are dealing with a struct or a class. To make that safe in cases when we do get a struct, the rule #5 was added. Surely, it is known inside a member whether the container is a struct or a class and the safety can be enforced there.
 
 
 **Verifiability.**  
