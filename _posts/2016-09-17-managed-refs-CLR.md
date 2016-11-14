@@ -15,7 +15,7 @@ It is permitted for ```&``` to refer to objects not managed by GC - like locals,
 The GC "magic" results in certain limitations:  
 
 * Addition, subtraction and incrementing operations are mostly meaningless for managed pointers. When the referent can move at any time, such operations are hard to define. In rare cases subtraction can be used to get the byte distance between ```&```s to elements of the same array and that only works because the distance is not changed by GC and subtraction itself is an atomic operation so GC cannot happen while subtraction is in progress.    
-In fact the aliasing "true pointer" implementation is not even strictly guaranteed. For example in calls done via remoting it is permitted for a conforming CLI implementation to implement ```&``` parameters as copy-in/copy-out.
+In fact the aliasing "true pointer" implementation of managed refs is not even strictly guaranteed. For example in calls done via remoting it is permitted for a conforming CLI implementation to implement ```&``` parameters as copy-in/copy-out.
 
 * Fields and array elements are not permitted to have ```&``` types. ```&``` cannot be boxed either.
 These restrictions are a bit artificial. It just makes the job of GC easier if ```&``` themselves are never on the heap. In theory ```&``` fields and the like could be permitted and would allow for strange object topologies that are entirely alive by referring to each other via internal ```&``` pointers. There is, however, not a lot of value in that.
@@ -28,4 +28,4 @@ These restrictions are a bit artificial. It just makes the job of GC easier if `
 
 Considering the "magic" nature of managed pointers and corresponding limitations, not a lot of useful scenarios would be enabled by exposing them directly. Besides, having multiple incompatible kinds of pointers side-by-side could be unnecessary confusing. Those are the main reasons for C# to have features like ref parameters, locals and returns, which are just a thin veneer above managed pointers and yet typesafe, while not exposing managed pointers themselves as a language feature.
 
-Yes, a managed pointer can be ```null```, what else would it be before assigning anything? However in a well-formed C# program with no unsafe/reflection tricks or interop, you should never see a nullptr ```ref``` variable.
+Yes, a managed pointer can be ```null```, - what else would it be before assigning anything? However in a well-formed C# program with no unsafe/reflection tricks or interop, you should never see a nullptr ```ref``` variable.

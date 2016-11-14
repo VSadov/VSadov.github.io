@@ -8,7 +8,7 @@ So, what is exactly safe to return and what is not?
 
 Clearly attempting to return a local by reference should trigger an error. But what about a field of a local? If that local happens to be a struct we would be in trouble, since we would still be returning a reference to the local data. On the other hand it would be ok if the local is a class. Therefore there is a need to generalize the rule to include the fields of struct locals as well, recursively. - Field of a field of a field of a field of ... of a local is unsafe to return as long as all types in the chain are structs.
 
-Another interesting question is whether a ref return or a ref parameter are safe to return.
+Another interesting question is whether a ref return or a ref parameter is safe to return.
 
 Consider the following example:
 
