@@ -50,7 +50,7 @@ Specifically it is irrelevant if receiver is safe to return, regardless whether 
 ----  
 
 The last two rules might look a bit curious. - What's up with "this"?  
-The special treatment for "this was added to handle the following scenario:
+The special treatment for "this" was added to handle the following scenario:
 
 ```cs
 
