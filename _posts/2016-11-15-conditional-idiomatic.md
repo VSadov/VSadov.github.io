@@ -42,7 +42,7 @@ public class C
 }
 ```  
 
-Raising event, however, is nothing more then invoking ```Invoke``` method on the event. And performing that conditionally on not being null is much clearer with ```?.``` :
+Raising an event, however, is nothing more then invoking ```Invoke``` method on the event. And performing that conditionally on not being null is much clearer with ```?.``` :
 
 ```cs
 public class C
