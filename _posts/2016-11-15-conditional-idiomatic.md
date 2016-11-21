@@ -78,7 +78,7 @@ int hashcode = temp ?? 42;
 
 Compiler is actually smart enough to understand the meaning of ```?.``` +  ```??``` combination, and emits more optimal code. It knows that the only way for the ```obj?.GetHashCode()``` to be ```null``` is when ```obj``` is ```null``` and in such case the whole expression returns ```42```. When ```obj``` is not ```null```, the result of ```GetHashCode()``` is returned. In fact, there is no need to involve intermediate wrapping/unwrapping of ```int?``` at all.
 
-The actual code that is emitted as equivalent of:
+The actual code, that is emitted, is an equivalent of:
 
 ```cs
 object stackTemp = obj;
