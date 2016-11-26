@@ -144,7 +144,7 @@ reentryTheScope:
 
         If iterations > -3 Then
             ' "variable" is out of scope here, but it exists and has a value
-            ' let's reentering the While loop and check upon the value of the "variable"
+            ' let's reenter the While loop and check upon the value of the "variable"
             Console.WriteLine("reentering scope")
             GoTo reentryTheScope
         End If
