@@ -5,11 +5,11 @@ tags: [CSharp, Definite Assignment, Language Design]
 
 Definite Assignment Analysis prevents bugs, but there are deeper reasons to have it as a required feature in the language.
 
-Indeed - Why have such strict rules instead of just assuming that unassigned locals contain default/zero values? That seems to work ok for fields. It is also known that C# compiler decorates all methods with IL directive ```localsinit```, which guarantees that all locals are zeroed out when method is entered. So what is the problem?
+Indeed - Why have such strict rules instead of just assuming that unassigned locals contain default/zero values? After all, that seems to work ok for fields. It is also known that C# compiler decorates all methods with IL directive ```localsinit```, which guarantees that all locals are zeroed out when method is entered. So what is the problem?
 
-```localsinit``` is, unfortunately, not enough for the semantics of C# locals. It would work if the life time of all local bindings (i.e. [extents](https://en.wikipedia.org/wiki/Variable_(computer_science)#Scope_and_extent)), was the whole method, but that is not a case in C#. In C# locals can have scopes smaller than the entirety of a method and extents match the lexical scopes. Every time the control flow enters a scope, a new set of bindings for the locals contained by that scope is created and the bindings exist as long as they can be referenced. In the most general case the "new bindings" would imply a newly allocated storage completely unrelated to the bindings possibly created when the same scope was entered previously.
+```localsinit``` is, unfortunately, not enough for the semantics of C# locals. It would work if the life time of all local bindings (i.e. [extents](https://en.wikipedia.org/wiki/Variable_(computer_science)#Scope_and_extent)), was the whole method, but that is not a case in C#. In C# locals can have scopes smaller than the entirety of a method and extents match the lexical scopes. Every time the control flow enters a scope, a new set of bindings for the locals contained by that scope is supposed to be created and the bindings exist as long as they can be referenced. In the most general sense the "new bindings" would imply a newly allocated storage completely unrelated to the bindings possibly created when the same scope was entered previously.
 
-A brute-force solution would be to map local variables of the same scope to fields in a synthesized class and create a new instance of such class when entering a scope. In fact this is what happens when locals are accessed from lambdas. Such locals can be accessed beyond the life time of the containing method and multiple bindings to the same variables could coexist at the same time, so compiler needs to allocate their storage on the heap and rely on GC for keeping them alive as long as they can be referenced.
+A brute-force solution would be to map local variables of the same scope to fields in a synthesized class and create a new instance of such class when entering a scope. In fact this is what happens to locals that are accessible from lambda expressions. Such locals can be used beyond the life time of the containing method and multiple bindings to the same variables could coexist at the same time, so compiler needs to allocate their storage on the heap and rely on GC for keeping them alive as long as they can be referenced.
 
 Example of multiple bindings to the same local:  
 
@@ -26,7 +26,7 @@ Example of multiple bindings to the same local:
           reenterScope:
 
             {
-                int sameVariable = 0;  // <-- The variable
+                int sameVariable = 0;  // <-- THE VARIABLE
 
                 setters[iteration] = (i) => sameVariable = i;
                 getters[iteration] = () => sameVariable;
@@ -63,14 +63,14 @@ Assigned values of different bindings of the sameVariable:
 42
 ```
 
-The most common case is, however, when locals are just that - locals. They are not accessed from lambdas or anything like that and at any time only one (or none) bindings to such local may exist. In such cases local can be simply mapped to IL local slots and reused every time the control flow enters the scope.
+The vastly most common case is, however, when locals are just that - locals. They are not accessed from lambdas or anything like that and at any time only one (or none) bindings to such local may exist. In such cases local can be simply mapped to IL local slots and reused every time the control flow enters the scope.
 The only problem is that the slot values would need to be “reset” every time the scope is entered to the default value and there is no help from ```localsinit``` here since that works only once - when the whole method is invoked.
 
 In theory, compiler could inject code that would do the “resetting” of all relevant slots, when a scope is entered, but that would be wasteful. Only some of the locals in a given scope would be read from. Besides, most of them would be written to before reading anyways, so why not just require that a local is written to before being read? That would make the code less buggy, but most of all it will make the “resetting” entirely unnecessary.
 
 **Essentially, a rule that requires that locals are definitely assigned before being read serves the same purpose as ```localsinit```, but does much better job.**
 
-1. It works at every nested scope level (not just on the method level)  
+1. It works at every nested lexical scope recursively (not just on the method level)  
 2. It gives stronger guarantees. You can see only what you have already assigned to the variable. It is impossible to read uninitialized/stale state by accident.  
 3. It is minimally redundant. If you do not read a local on some code path you do not need to ensure that it is assigned on that code path  
 
@@ -213,8 +213,8 @@ Module1.vb(27, 13) : Error BC36597 : 'Goto reentryTheScope' is not valid because
 
 Since C# enforces stronger invariant than provided by ```localsinit```, one would wonder why compiler still puts ```localsinit``` on methods. A simple answer is that IL verification rules require that. The underlying reason for the requirement is that the user’s code is not the only entity that might read the locals. The other one is the Garbage Collector.  
 
-The issue with GC is that it scans the IL locals of currently active methods when it needs to record roots of reachable object graphs, and GC happens at fairly random times. Definite assignment does not guarantee that locals will be assigned something deterministic before GC happens and things will go terribly bad if locals contain random junk. Therefore there is a rule that requires that verifiable methods have ```localsinit``` as an instruction directing the JIT to wipe the whole stack frame clean before the method body is formally entered and CG had any chance to scan the locals.  
+The issue with GC is that it scans the IL locals of currently active methods in order to record the roots of reachable object graphs, and GC happens at fairly random times. Definite assignment does not guarantee that locals will be assigned something deterministic before GC happens and things will go terribly bad if locals contain random junk. Therefore there is a rule that requires that verifiable methods have ```localsinit``` as an instruction directing the JIT to add a method preamble that wipes the whole stack frame clean before the method body is formally entered and GC had any chance to scan the locals.  
 
-In theory the rule could be required only on methods with reference type locals (or structs containing references), but that would make a difference only to a fraction of methods while complicating the rule. Instead CLI standard allows JIT implementations to disregard the directive if, through some analysis, it could be inferred that not wiping the frame is a safe thing to do.  
+In theory the rule could be required only on methods with locals of reference types  (or structs containing references), but that would make a difference only to a fraction of methods while complicating the rule. Instead CLI standard allows JIT implementations to disregard the directive if, through some analysis, it could be inferred that not wiping the frame is a safe thing to do.  
 
 I am not sure if JITs use this kink in the rules very often though. With exception of the most trivial cases, the analysis could be too involved to be feasible at JIT time and wiping the stack frame is not overly expensive. Still, since there are some costs associated with locals (wiping the frame is just one of them), C# compiler generally tries to be frugal with usage of local slots, especially when compiling with /o+.  
