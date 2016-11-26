@@ -120,7 +120,7 @@ static void Main(string[] args)
 
 Interestingly, in VB, for historical reasons, locals not referenced from lambdas do have extents that match the entirety of the method and thus definite assignment analysis is much less strict - it basically exists just to give warnings on some cases that likely to be coding mistakes.
 
-example of VB local binding maintained through the entirety of the method life time:
+example of a VB local binding maintained through the entirety of the method life time:
 
 ```vb  
 Module Module1
