@@ -63,7 +63,7 @@ Assigned values of different bindings of the sameVariable:
 42
 ```
 
-The vastly more common case is, however, when locals are just that - locals. They are not accessed from lambdas or anything like that and at any time only one (or none) bindings to such local may exist. In such cases locals can be simply mapped to IL local slots and reused every time the control flow enters the scope.
+The most common case is, however, when locals are just that - locals. They are not accessed from lambdas or anything like that and at any time only one (or none) bindings to such local may exist. In such cases locals can be simply mapped to IL local slots and reused every time the control flow enters the scope.
 The only problem is that the slot values would need to be “reset” every time the scope is entered to the default value and there is no help from ```localsinit``` here since that works only once - when the whole method is invoked.
 
 In theory, compiler could inject code that would do the “resetting” of all relevant slots, when a scope is entered, but that would be wasteful. Only some of the locals in a given scope would be read from. Besides, most of them would be written to before reading anyways, so why not just require that a local is written to before being read? That would make the code less buggy, but most of all it will make the “resetting” entirely unnecessary.
