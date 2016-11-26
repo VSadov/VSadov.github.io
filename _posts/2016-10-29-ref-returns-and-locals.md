@@ -1,6 +1,6 @@
 ---
 title: Local variables cannot be returned by reference.
-tags: [CSharp, refs]
+tags: [CSharp, refs, Language Design]
 ---
 Ability to return by reference introduces an interesting scenario.- What happens when a local variable is returned by reference? Is the variable still alive when its containing method has completed? What happens with the returned reference when callee is invoked again?
 

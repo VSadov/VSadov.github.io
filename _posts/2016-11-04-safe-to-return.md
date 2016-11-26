@@ -1,6 +1,6 @@
 ---
 title: Safe to return rules for ref returns.
-tags: [CSharp, refs]
+tags: [CSharp, refs, Language Design]
 ---
 For the reasons explained in the [earlier post]({% post_url 2016-10-29-ref-returns-and-locals %}), C# disallows returning local variables by reference. While the principle of "*Cannot return local variables by reference*" seems very simple, there are many ways for a user to violate the principle directly or indirectly and enforcing it is an interesting challenge.  
 
