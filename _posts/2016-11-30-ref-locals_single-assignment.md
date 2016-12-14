@@ -4,7 +4,7 @@ tags: [CSharp, refs, Language Design]
 ---
 Current restriction on ref locals to be single-assignable is a straightforward and simple way to guard against several potential problems. There are ways to relax the restriction in the future, if that is found to be beneficial enough.
 
-First of all - ref locals are a new kind of ref variables. I have touched some general details common to all ref variables in the earlier posts. [They are not pointers]({% post_url 2016-09-05-refs-not-ptrs %}). They are implemented on top of [managed references]({% post_url 2016-09-17-managed-refs-CLR %}). In many ways ref locals are similar to ref parameters. Both belong to the kind of variables That do not get their own storage and instead are bound to existing storage.
+First of all - ref locals are a new kind of ref variables. I have touched some general details common to all ref variables in the earlier posts. [They are not pointers]({% post_url 2016-09-05-refs-not-ptrs %}). They are implemented on top of [managed references]({% post_url 2016-09-17-managed-refs-CLR %}). In many ways ref locals are similar to ref parameters. Both belong to the kind of variables that do not get their own storage and instead are bound to existing storage.
 
 Ref locals are lexically scoped, just like other locals, but the life time of the storage that they are bound to may not match the scopes of the references. That is where things get "interesting".
 
@@ -71,7 +71,7 @@ class Program
             var variable = r0 + 1;
 
             // keeping the previous binding of "r1" in "r0"
-            r1 = r0;
+            r1 = ref r0;
 
             // binding "r1" to "variable". (hypothetical syntax for ref re-assignment)
             // NOTE: "variable" is about to go out of scope,
