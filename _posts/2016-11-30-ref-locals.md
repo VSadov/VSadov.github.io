@@ -10,9 +10,9 @@ Ref locals are lexically scoped, just like other locals, but the life time of th
 
 It could be observed that unrestricted _"any ref local can be bound or re-bound to any variable at any time"_ may lead to the following problems:
 
-**1. If you want to return a ref local, compiler must be able to validate that all possible bindings are "safe to return by ref"**
+**1. If you want to return a ref local, compiler must be able to validate that all possible bindings at that point are "safe to return by ref"**
 
-Here is an example of a ref local that is not safe to return due to ref assignment and nontrivial control flow.
+Here is an example of a ref local that is not safe to return due to ref assignments and nontrivial control flow.
 
 ```cs
 ref int RotateRefs()
@@ -132,7 +132,7 @@ The analysis that is required to validate the example above would be something s
 Note that this analysis would also be sufficient to prove if/when ref locals are safe-to-return. If at particular point, the set of possible scopes for a ref local contains only the "out-of-method" scope, then ref-returning is safe.
 
 Also note that the analysis is very complex, can be computationally expensive and would often yield diagnostics that is hard to act upon. -    
-_"ERROR: can't use a ref local here because it is possibly referencing a variable that is out of scope"_, scratch your head and try figure where and how the inconvenient binding was picked up.
+_"ERROR: can't use a ref local here because it is possibly referencing a variable that is out of scope"_, - scratch your head and try figure where and how the inconvenient binding was picked up.
 
 Language designers are naturally concerned when a feature requires such analysis. In such situations it is desirable to find a way to constrain the feature in order to reduce the number of scenarios supported, preferably at the cost of uncommon cases. After all, maximizing the number of programs that compile correctly, by itself is not a goal.
 
@@ -141,7 +141,7 @@ In a case of ref locals, it was found that forcing the initialization of ref loc
 * the issue with exposing locals by reference to outer scopes is trivially prevented, since it is not possible to initialize something with a variable from an inner scope.  
 * safe-to-return property can be simply copied from the initial referent, since we require that there is one and there won't be another.
 
-It is possible that single-assignment requirement will be found too constraining and the language may need to be relaxed a bit. Generally it is ok to start accepting code that used to be an error in previous versions, but the opposite changes are extremely rare.
+It is possible that single-assignment requirement will be found too constraining and the language may need to be relaxed a bit in the future. Generally it is ok to start accepting code that used to be an error in previous versions, but the opposite changes are extremely rare.
 
 _Some possible future directions for the feature are:_    
 
@@ -151,7 +151,7 @@ _Some possible future directions for the feature are:_
 Note that additions above would allow more code to be legal, primarily when dealing with unscoped/heap variables, while not yet require complicated flow analysis.
 
 
-**== Pedantic notes:**
+-- **Pedantic notes:**
 
 Before the ref locals were introduced, it was, in some situations, possible to use `System.TypedReference` in combination with `__makeref`, `__refvalue` keywords as a crude substitute. `TypedReference` clearly contains a managed reference and acts as a proxy, so why all the fuss with C# scoping and why that does not apply to TypedReference?
 
