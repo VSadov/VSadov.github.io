@@ -6,7 +6,7 @@ As a matter of implementation details, C# tuples are implemented on top of Value
 
 ## What is actually emitted when tuples are used in the code.
 
-Underlying implementation of C# tuples is fairly simple. Tuples of cardinality 2 through 7 are directly mapped to `ValueTuple` of corresponding generic arity. I.E `(int, int)` is represented by `ValueTuple<int, int>`.
+Underlying implementation of C# tuples is fairly simple. Tuples of cardinality 2 through 7 are directly mapped to [`ValueTuple`](  https://github.com/dotnet/corefx/blob/15d00331e54e6a2d051c9a939fe1deb72b200e26/src/System.ValueTuple/src/System/ValueTuple/ValueTuple.cs) type of corresponding generic arity. I.E `(int, int)` is represented by `ValueTuple<int, int>`.
 
 ```cs  
 public void Main()
