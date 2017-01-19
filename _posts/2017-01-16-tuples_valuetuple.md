@@ -73,7 +73,7 @@ Anything that can be done with `System.Nullable<System.Int32>` can be done with 
 - identity convertible.  
 Here language would track distinct types with different static capabilities, but runtime representation is indistinguishable so a variable of one type can be reinterpreted as a variable of another type.  
 Example: `List<dynamic>` and `List<object>`  
-`myList[0].Blah()` would work with the first, but would not compile with the second. However you can make an alias of one type to a variable with another.
+`myList[0].Blah()` would work with the first, but would not compile with the second. However you can make an alias of one type to a variable of another.
 
 ```cs
 public void Main()
