@@ -144,7 +144,7 @@ public void Main()
     System.Console.WriteLine(vt.Item8);
 
     // that is actually emitted as
-    Console.WriteLine(vt.Rest.Item1);
+    System.Console.WriteLine(vt.Rest.Item1);
 }
 ```  
 
