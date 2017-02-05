@@ -13,7 +13,7 @@ main:
     url: /tags/
 
   - title: "Privacy"
-    url: privacy.html
+    url: /privacy.html
 
   # - title: "Pages"
   #  url: /page-archive/
