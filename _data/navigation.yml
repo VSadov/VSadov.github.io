@@ -12,6 +12,9 @@ main:
   - title: "Tags"
     url: /tags/
 
+  - title: "Privacy"
+    url: privacy.html
+
   # - title: "Pages"
   #  url: /page-archive/
 
