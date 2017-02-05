@@ -26,7 +26,7 @@ If I have `(int X, int Y)` and `int Z`, can I apply the following?
 (T, U, V) Append<T, U, V>((T, U) tu, V v) => (tu.Item1, tu.Item2, v);
 ```
 
-If users can't use tuples in generic/abstract scenarios just because they have element names, they'd be inclined to avoid the names altogether making the whole support of names questionable.
+If users can't use tuples in generic/abstract scenarios just because of the element names, they'd be inclined to avoid the names altogether making the whole support of names questionable.
 
 C# designers wanted to have both the expressiveness of the names, but also to make sure that names do not "stand in the way" when tuples are used as structural types. So the guiding principle was set to be:  
 
