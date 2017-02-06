@@ -32,8 +32,8 @@ C# designers wanted to have both the expressiveness of the names, but also to ma
 
  **Element names are semantically insignificant except when used directly.**
 
-The tuple types with element names are really the same as ones without. The only difference is the presence of "friendly names".  
-In particular all tuple elements have the default `Item1`, `Item2`,.... `ItemN` names. It is allowed to name the elements with their default names, but only as long as they are in the right position.
+The tuple types with element names are really the same as ones without. The only addition is the presence of "friendly names".  
+In particular all tuple elements have the default `Item1`, `Item2`,.... `ItemN` names, even those that have "friendly" element names. It is allowed for friendly names to be the same as the default names, but only as long as they are in the right position.
 
 ```cs
 // Item2 causes an error here, since it is in a wrong position.
@@ -81,9 +81,9 @@ static class Ext2
 
 **The dynamic type of a tuple variable is just the underlying ValueType.**
 
-Essentially the "tuple" part of these types, including their element names, is just a compile-time decoration that compiler uses and propagates through expressions.
+Essentially the "tuple" part of these types, including their element names, is a compile-time decoration that compiler understands, uses and propagates through expressions.  
 
-The [erasure](https://en.wikipedia.org/wiki/Type_erasure) of tuple related information can be easily observable by checking the type of boxed instances or the static type as tracked by  CLR type system.
+The [erasure](https://en.wikipedia.org/wiki/Type_erasure) of tuple related information can be observable by checking the type of boxed instances or the static type as tracked by  CLR type system.  
 
 ```cs
 class Program
@@ -111,8 +111,10 @@ The output is:
 ```
 **Representing element names in metadata**
 
-Since CLR types themselves do not store tuple information, compiler puts extra information to specify tuple element names in member signatures.  
-The encoding is rather simple - `TupleElementNamesAttribute` simply contains an array of element name strings in the pre-order depth-first traversal order.
+Since CLR types themselves do not store tuple information, compiler emits extra information to specify tuple element names in member signatures.  
+The encoding is rather simple - `TupleElementNamesAttribute` contains an array of element name strings in the pre-order depth-first traversal order of the parts of the corresponding type. Basically - when you go through the type declaration every tuple element would consume one string from the attribute. If no tuple element names are present the attribute does not need to be emitted.
+
+Example:
 
 ```cs
 // "C" and "F" are intentionally missing - will be encoded as "null" strings.
@@ -134,16 +136,16 @@ private static Dictionary<ValueTuple<int, int>, ValueTuple<int, int>?> Test
 }
 ```
 
-As explained in [earlier post]({% post_url 2017-01-16-tuples_valuetuple %}), ValueTuple types that matches a tuple pattern are promoted into tuple types during metadata import. In addition to that, the element names are "rehydrated" from a TupleElementNames attribute, if one is specified for the given part of a member signature.  
+As explained in [earlier post]({% post_url 2017-01-16-tuples_valuetuple %}), ValueTuple types that match a tuple pattern are promoted into corresponding tuple types during metadata import. In addition to that, the element names are "rehydrated" from a TupleElementNames attribute, if one is specified for the given part of a member signature.  
 
 Note that in terms of cross-language interoperability, understanding `TupleElementNames` attribute or the tuple encoding pattern is optional.  
-If the consuming language does not care about element names (like F#) it can ignore the attribute and just see the signature with "nameless" tuples. If the consuming language does not understand tuples at all (like C#6) it can still interoperate by using ValueTuple types.
+If the consuming language does not care about element names (like F#), it can ignore the attribute and just see the signature with "nameless" tuples. If the consuming language does not understand tuples at all (like C#6), it can still interoperate by using ValueTuple structs.
 
 **Compile time propagation of tuple types**
 
 Note that compile time propagation of the tuple types can go quite far, including through the generic type inference. At compile time the tuple types are "real types".
 
-Example of a tuple type with element names propagated through several level of type inference.
+Example of a tuple type with element names propagated through several level of type inference:
 
 ```cs
 static void Main(string[] args)
@@ -169,7 +171,7 @@ static U[] Apply<T, U>(T arg, Func<T, U> f)
 
 The element names are not always involved in the inference. In scenarios where tuple arguments match tuple parameters of the same cardinality, the inference works in a purely structural way and element names are ignored.  
 
-Surely, when type parameters are inferred from the argument element types, the names cannot take part in that.
+Surely, when type parameters are inferred from the argument element types, the names of those elements cannot take part in that.
 
 ```cs
 static void Main(string[] args)
@@ -251,7 +253,7 @@ static T OneOrAnother<T>(T x, T y, bool flag)
 **Can element names become "semantically significant" through lambda inference?**
 
 There is an interesting scenario which seemingly demonstrates that element names _can_ have effect on overload resolution when combined with lambda inference. The example below is able to steer overload resolution to one of the candidates by using specific tuple element names.  
-However at closer examination, the element names are actually _used directly_ in this scenario, so of course they make a difference. It is not a case where two tuple types compete for better applicability, it is a case where two reified lambdas compete, and one would not compile.
+However at closer examination, the element names are actually _used directly_ in this scenario, so of course they make a difference. It is not a case where two tuple types compete for better applicability, it is a case where two reified lambdas compete, and one would have compile errors.
 
 ```cs
 static void Main(string[] args)
@@ -283,7 +285,7 @@ static T Select<T>(T x, T y, Selector2<(T Alice, T Todd), T> selector)
 
 **Diagnostics on element name mismatches**
 
-Considering how easily element names can be cast aside, the language designers had concerns that compiler would be less than helpful against certain kinds of mistakes. Clearly some name mismatches could be indicative of a confusion or a typo.
+Considering how easily element names can be cast aside, the language designers had concerns that compiler would be less than helpful against certain kinds of mistakes. Some name mismatches could be indicative of a confusion or a typo.
 
 ```cs
 static void Main(string[] args)
@@ -330,7 +332,7 @@ static void Main(string[] args)
 {
     Animal a = new Dog();
 
-    a.M1(). //  AnimalName or DogName ?
+    a.M1(). ???  //  AnimalName or DogName ?
 }
 
 abstract class Animal
