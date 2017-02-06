@@ -79,7 +79,7 @@ static class Ext2
 }
 ```  
 
-**The dynamic type of a tuple variable is just the underlying ValueType.**
+**The dynamic type of a tuple variable is just the underlying ValueTuple.**
 
 Essentially the "tuple" part of these types, including their element names, is a compile-time decoration that compiler understands, uses and propagates through expressions.  
 
