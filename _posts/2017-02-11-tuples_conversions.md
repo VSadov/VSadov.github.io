@@ -313,6 +313,6 @@ static class C1
 
 **Why so complicated?**
 
-Conversions is a pervasive and complicated aspect of the language. Some degree of complexity is unavoidable when a feature needs to behave in a consistent and predictable manner.  
+Conversions is a pervasive and complicated aspect of the language. Some degree of complexity is unavoidable when a feature needs to work with conversions and behave in a consistent and predictable manner.  
 
 Integration with conversions is often cited as contributing a good portion of the famous "[minus 100 points](https://blogs.msdn.microsoft.com/ericgu/2004/01/12/minus-100-points/)" penalty that applies to every new language feature and needs to be balanced out with benefits.
