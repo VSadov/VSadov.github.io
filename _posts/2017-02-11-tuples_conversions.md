@@ -2,9 +2,9 @@
 title: C# Tuples. Conversions.
 tags: [CSharp, tuples, Language Design]
 ---
-In a statically typed language like C#, every new kind of type or an expression needs to define how it fits into the framework of type conversions. Tuples are not an exception.
+In a statically typed language like C#, every new kind of type or a new expression needs to define how it fits into the framework of type conversions. Tuples are not an exception.
 
-Truth be told, initially it was believed that it would be better if tuples have only very limited support for conversions. That was mostly out of fear that composite type such as tuple would run into contradicting scenarios with conversion classification. I.E. if `(int, object)` needs to convert to `(object, int)`, do we have an implicit or explicit conversion or something in between? Is it boxing, or unboxing, or both?  
+Truth be told, initially it was believed that it would be better for tuples to have only a very limited support for conversions. That was mostly out of fear that a composite type such as tuple would run into contradicting scenarios with conversion classification. I.E. if `(int, object)` needs to convert to `(object, int)`, do we have an implicit or explicit conversion or something in between? Is it boxing, or unboxing, or both?  
 Forcing the user to deconstruct/reconstruct into a tuple of a desired type would avoid the issues, but it was quickly found to be inconvenient.  
 
 **"Distributing" behavior of tuple conversions.**
@@ -20,7 +20,7 @@ C# distinguishes conversions _from expression_ and conversions _from type_.
 Conversions from _expression_ are used when expression results are coerced to be of a particular type. -
 
 ```cs
-// converion from expression is used to turn int into long
+// conversion from expression is used to turn int into long
 long x = int.MaxValue;  
 ```
 
@@ -36,21 +36,21 @@ void M1(long val) => Console.WriteLine("long");
 M1(short.MaxValue);
 ```
 
-Conversion from a type generally entails that similar conversion from an expression of such type to the same target type also exists. The opposite is not always true though.  
+Existence of a conversion from a type generally entails that similar conversion from an expression of such type to the same target type also exists. The opposite is not always true though.  
 There are several reasons for the distinction:  
 
-* some expressions do not have natural type at all.  
+* some expressions do not have a natural type at all.  
   _Example:_  `(x)=>x` does not have any type on its own, but converts to `Func<int, int>`
 * some expressions have a natural type, but their value fits other types.  
   _Example:_  `42` has type `int`, but implicitly convertible to `byte`, even though `int` does not.
 * some types have special behaviors.  
   _Example:_  expressions of type `dynamic` implicitly convert to any type, but the _type_ `dynamic` does not have such conversions.
 
-  Indeed, since most types are implicitly convertible to `dynamic`, having equal conversion the other way would make an overload that takes `dynamic` always ambiguous. An implicit conversion from `dynamic` _expresson_ , though, just means that conversions of `dynamic` values are statically acceptable with the actual dynamic conversion happening at the run time.
+  Indeed, since most types are implicitly convertible to `dynamic`, having equal conversion the other way would make an overload that takes `dynamic` always ambiguous. An implicit conversion from `dynamic` _expresson_ , though, just means that conversions of `dynamic` values are statically acceptable with the actual dynamic conversions happening at the run time.
 
-Tuple conversions transparently apply same distinctions. There are tuple conversions that exist only for tuple literals, but not for tuple types. That happens when there are conversions from the argument expressions of the literal to the target element types, but not from the types of those arguments.
+Tuple conversions transparently have the same distinction. There are tuple conversions that exist only from tuple literals, but not from tuple types. That happens when there are conversions from the argument expressions of the literal to the target element types, but not from the types of those arguments.
 
-Example of tuple literal conversions:  
+Examples of tuple literal conversions:  
 
 ```cs  
 // the RHS tuple literal does not have a natural type at all
@@ -67,7 +67,7 @@ Example of tuple literal conversions:
 
 **Target-typing and evaluation order**
 
-Conversion of literals to the target type is often called 'target-typing'. That is because the RHS is never materialized in its natural type, instead an instance of the target type is directly created from the RHS value. Indeed, the RHS may not even have a natural type so an instance of such type would not be possible to create.
+Conversion of a literal to the target type is often called 'target-typing'. That is because the RHS is never materialized in its natural type, instead an instance of the target type is directly created from the RHS value. Indeed, the RHS may not even have a natural type so an instance of such type would not be possible to create.
 
 All the same rules apply to tuple literal conversions, just in a "distributed" manner.
 
@@ -91,7 +91,7 @@ class C
 {
     static void Main()
     {
-        // literal tuple conversion is "distributed" to the arguments of the tuple
+        // literal tuple conversion is "distributed" to the arguments of the tuple.
         // I.E. every argument is individually target-typed.
         // An instance of (int, int, int) is never created.
         //
@@ -142,10 +142,11 @@ result: (0, 1, 2)
 
 **Implicit and Explicit conversions**
 
+Tuple conversions can be implicit or explicit.  
 Naturally, a tuple type/expression:
 
 * has an implicit tuple conversion to the target type if all elements have implicit conversions.
-* has an explicit tuple conversion to the target type if all elements have explicit conversion.
+* has an explicit tuple conversion to the target type if all elements have explicit conversions.
 
 Example:
 
@@ -161,7 +162,7 @@ static void Main(string[] args)
     (int, int) ti1 = ((int, int))td;
 
     // Method((long, long)) is preferred
-    // since `(long, long)` is implicitly convertible to `(dynamic, dynamic)`
+    // since `(long, long)` is implicitly convertible to `(dynamic, dynamic)`,
     // but `(dynamic, dynamic)` has no implicit conversion to `(long, long)`
     Method(ti);
 }
@@ -171,7 +172,7 @@ static void Method((long, long) ll){}
 static void Method((dynamic, dynamic) dd){}
 ```
 
-The principle is very similar to the lifted conversions in a case of nullable types. As long as `T` converts to `U`, same conversion exists between `T?` and `U?`. The main difference for tuples is that there is more than one underlying conversion and classification of the overall tuple conversion is performed conservatively based on _all_ the underlying conversions.
+The principle of existence of a conversion when underlying conversion exists is very similar to the lifted conversions in a case of nullable types. As long as `T` converts to `U`, same conversion exists between `T?` and `U?`. The main difference for tuples is that they have more than one underlying conversion and classification of the overall tuple conversion is performed conservatively based on _all_ the underlying conversions.
 
 It is actually possible for a conversion to be both lifted into nullable and into tuple conversions.
 
@@ -189,7 +190,7 @@ Example of a conversion lifted into a nullable, a tuple and then a nullable conv
 
 User-defined conversions is, perhaps, the most complicated aspect of C# conversions.
 
-To define composition with user-defined operators, C# language has a concept of Standard Conversions. Standard Conversions are specially privileged conversions - they can "stack" with user-defined conversion _operators_ to form user-defined _conversions_. The reason for the existence of such set of conversions is to widen the applicability of user-defined conversions to more cases than covered by the operator. The reason for the set to be small, an in particular to not include user-defined conversions, is to limit the number of combinations that can result in a conversion.
+To define composition with user-defined operators, C# language has a concept of Standard Conversions. Standard Conversions are specially privileged conversions - they can "stack" with user-defined conversion _operators_ to form user-defined _conversions_. The reason for the existence of such set of conversions is to widen the applicability of user-defined conversions to more cases than covered by the operator. The reason for the set to be small, and in particular to not include user-defined conversions, is to limit the number of combinations that can result in a conversion.
 
 For example if there is a user-defined conversion operator from type `C1` to `byte`, then an instance of type `C1` is also convertible to `short`. Since there is a standard conversion from `byte` to `short`, compiler can stitch one user-defined operator and one standard conversion into a user defined conversion from `C1` to `short`:
 
@@ -203,7 +204,7 @@ Consider that we are looking for conversion from `T1` to `T2`. Since any user-de
 
 The point is that the search space has a strict upper bound. If, for example the conversion, that stacks with user defined operator, could be another user-defined conversion, we would need to look at potentially endless chains of conversions involving unlimited number of intermediate types.
 
-The question is whether tuple conversions belong to "The Exclusive Club of Standard Conversions" or not. It was decided that they do.
+The question is whether tuple conversions belong to "The Exclusive Club of Standard Conversions" or not. It was decided that _tuple conversions are, in fact, standard conversions_.
 
 The convenience is obvious - if, for example, there is a user-defined implicit conversion operator from `C1` to `(int, int)`, then we can implicitly convert `C1` to `(long, long)` as well.
 
@@ -211,7 +212,7 @@ The convenience is obvious - if, for example, there is a user-defined implicit c
 C1 --- [implicit user defined op.] ---> (int, int) --- [implicit tuple conv.] ---> (long, long)
 ```
 
-A curious part is that tuple conversions are standard conversions regardless whether the underlying conversions are standard or not. The underlying conversions could even themselves be user defined conversions.  
+A curious part is that tuple conversions are standard conversions regardless whether their underlying conversions are standard or not. The underlying conversions could even themselves be user defined conversions.  
 This is a case where the conversion classification is _not_ "distributed" to the underlying conversions. Turns out that for the purpose of limiting the search space, such requirement is unnecessary. - at the top we still have a chain of conversions no longer than 2, and underlying element conversions, even if user-defined, cannot nest indefinitely, because tuples cannot nest indefinitely.
 
 It does, however, allow for some interesting scenarios.
