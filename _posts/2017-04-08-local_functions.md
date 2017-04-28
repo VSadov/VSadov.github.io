@@ -9,7 +9,7 @@ Local Functions is the C# implementation of [Nested function](https://en.wikiped
 Lambdas, or first-class functions in general, require implementation of local variables that are not allocated on the stack and have life times tied to the functional objects that need them. It is nearly impossible to implement them correctly and efficiently without relying on Garbage Collection or dropping the burden of variable ownership on the user via solutions such as capture lists. That was a serious blocking issue for some early languages.  
 A simple implementation of nested functions does not run into such complications, so it is more common for a language to support only nested functions and not lambdas.
 
-Anyways, since C# had lambdas for a long time, it does makes sense to look at the Local Functions in terms of differences and similarities.
+Anyways, since C# had lambdas for a long time, it does make sense to look at the Local Functions in terms of differences and similarities.
 
 ## Lambda expressions.##
 
