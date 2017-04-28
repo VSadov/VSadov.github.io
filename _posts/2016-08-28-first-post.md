@@ -1,6 +1,5 @@
 ---
 title: First Post
-tags: [firstpost, initialposts]
 ---
 This is a first post.
 

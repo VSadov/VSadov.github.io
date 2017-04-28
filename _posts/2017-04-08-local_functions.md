@@ -222,6 +222,6 @@ public void M()
 
 The main value proposition of local functions, in comparison to lambdas, is that local functions are simpler, both conceptually and in terms of run time overhead.
 
-Lambdas serve their role as [first-class functions](https://en.wikipedia.org/wiki/First-class_function) very well, but sometimes you only need a simple helper. Lambda assigned to a local variable could do the job, but there is an overhead of indirection, allocation of a delegate and possibly a closure. A private method works too and is cheaper to call, but there is an issue with encapsulation, or lack thereof. Such helper would be visible to everybody in the containing type. Too many helpers like this can result in a serious mess.
+Lambdas serve their role as [first-class functions](https://en.wikipedia.org/wiki/First-class_function) very well, but sometimes you only need a simple helper. Lambda assigned to a local variable could do the job, but there is an overhead of indirection, allocation of a delegate and possibly a closure. A private method works too and is cheaper to call, but there is an issue with encapsulation, or lack thereof. Such helper would be visible to everyone in the containing type. Too many helpers like this can result in a serious mess.
 
 A Local Function fits this scenario nicely. The overhead of calling a Local Function is comparable with a call to a private method, but there is no issue with polluting the containing type with a method that nothing else should call.
